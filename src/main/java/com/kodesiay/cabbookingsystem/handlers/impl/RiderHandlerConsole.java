@@ -4,17 +4,17 @@ import com.kodesiay.cabbookingsystem.exception.InvalidDetailsException;
 import com.kodesiay.cabbookingsystem.exception.RiderFunctionalityNotFound;
 import com.kodesiay.cabbookingsystem.handlers.RiderHandler;
 import com.kodesiay.cabbookingsystem.manager.RiderManager;
-import com.kodesiay.cabbookingsystem.manager.TripManager;
-import com.kodesiay.cabbookingsystem.model.Cab;
+import com.kodesiay.cabbookingsystem.manager.RideManager;
 import com.kodesiay.cabbookingsystem.model.Ride;
 import lombok.NonNull;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 
 public class RiderHandlerConsole implements RiderHandler {
     private RiderManager riderManager;
-    private TripManager tripManager;
+    private RideManager rideManager;
     private Scanner takeInput = new Scanner(System.in);
     private HashMap<String,Runnable> functionToExecute = new HashMap<String,Runnable>(){
         {
@@ -26,9 +26,9 @@ public class RiderHandlerConsole implements RiderHandler {
     };
 
     @NonNull
-    public RiderHandlerConsole(RiderManager rideManager) {
-        this.riderManager = rideManager;
-        this.tripManager = tripManager;
+    public RiderHandlerConsole(RiderManager riderManager, RideManager rideManager) {
+        this.riderManager = riderManager;
+        this.rideManager = rideManager;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class RiderHandlerConsole implements RiderHandler {
 
     @Override
     public void register() {
-        String riderId = takeInput.nextLine();;
+        String riderId = takeInput.nextLine();
         String riderName = takeInput.nextLine();;
         String riderEmailName = takeInput.nextLine();
         if(riderName.isEmpty() || riderEmailName.isEmpty()) {
@@ -52,17 +52,29 @@ public class RiderHandlerConsole implements RiderHandler {
     }
 
     @Override
-    public void bookCab() {
-
+    public String bookCab() {
+        String riderEmailId = takeInput.nextLine();
+        int sourceX = Integer.valueOf(takeInput.next()), sourceY = Integer.valueOf(takeInput.next());
+        int destX = Integer.valueOf(takeInput.next()), destY = Integer.valueOf(takeInput.next());
+        String bookedCabRideId= rideManager.bookCab(riderEmailId,sourceX,sourceY,destX,destY);
+        return bookedCabRideId;
     }
 
     @Override
-    public Ride fetchRideHistory() {
-        return null;
+    public void rideCab() {
+        String rideId = takeInput.nextLine();
+        rideManager.rideCab(rideId);
+    }
+
+    @Override
+    public List<Ride> fetchRideHistory() {
+        String riderId = takeInput.nextLine();
+        return rideManager.getRidesForRider(riderId);
     }
 
     @Override
     public void endTrip() {
-
+        String rideId = takeInput.nextLine();
+        rideManager.endRide(rideId);
     }
 }
